@@ -2,6 +2,7 @@ package com.example.pruebaretrodos
 
 import RetrofitServiceFactory
 import android.os.Bundle
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +25,23 @@ class MainActivity : AppCompatActivity() {
         setupScrollListener()
 
         loadMovies(currentPage)
+
+        val searchView: SearchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    moviesAdapter.filter.filter(it)
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    moviesAdapter.filter.filter(it)
+                }
+                return false
+            }
+        })
     }
 
     private fun setupScrollListener() {
@@ -41,14 +59,17 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
+    private var totalPageCount = Int.MAX_VALUE
     private fun loadMovies(page: Int) {
+        if (page > totalPageCount) {
+            return
+        }
         val service = RetrofitServiceFactory.makeRetrofitService()
         lifecycleScope.launch {
             try {
-                isLoading = true
-                val newMovies = service.listPoupularMovies("3e5f06a6270e357ec14bb1a776288b2f", "es-ES", page)
-                moviesAdapter.addMovies(newMovies.results)
+                val response = service.listPoupularMovies("3e5f06a6270e357ec14bb1a776288b2f", "es-ES", page)
+                totalPageCount = response.total_pages
+                moviesAdapter.addMovies(response.results)
                 isLoading = false
             } catch (e: Exception) {
                 e.printStackTrace()
