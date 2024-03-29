@@ -1,5 +1,6 @@
 package com.example.pruebaretrodos
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import data.model.Result
+import java.util.Locale
 
 class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>(), Filterable {
 
@@ -40,7 +42,7 @@ class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapt
     fun addMovies(newMovies: List<Result>) {
         movies.addAll(newMovies)
         // Refiltrar las películas basado en el último texto de búsqueda.
-        getFilter().filter(lastSearch)
+        filter.filter(lastSearch)
     }
 
     override fun getItemCount(): Int = moviesFiltered.size
@@ -56,7 +58,11 @@ class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapt
                 } else {
                     val filteredList = mutableListOf<Result>()
                     for (movie in movies) {
-                        if (movie.title.toLowerCase().contains(charString.toLowerCase())) {
+                        if (movie.title.lowercase(locale = Locale.ROOT).contains(
+                                charString.lowercase(
+                                    Locale.ROOT
+                                )
+                            )) {
                             filteredList.add(movie)
                         }
                     }
@@ -65,6 +71,7 @@ class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapt
                 return FilterResults().apply { values = moviesFiltered }
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 moviesFiltered = results?.values as MutableList<Result>
