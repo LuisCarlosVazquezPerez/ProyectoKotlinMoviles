@@ -14,6 +14,8 @@ import data.model.Result
 class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>(), Filterable {
 
     var moviesFiltered = mutableListOf<Result>()
+    // Variable para almacenar el último texto de búsqueda.
+    private var lastSearch = ""
 
     init {
         moviesFiltered = movies
@@ -25,24 +27,20 @@ class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapt
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.movie_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
         return MovieViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = moviesFiltered[position]
         holder.movieTitle.text = movie.title
-        Glide.with(holder.movieImage.context)
-            .load("https://image.tmdb.org/t/p/w500${movie.poster_path}")
-            .into(holder.movieImage)
+        Glide.with(holder.movieImage.context).load("https://image.tmdb.org/t/p/w500${movie.poster_path}").into(holder.movieImage)
     }
 
     fun addMovies(newMovies: List<Result>) {
         movies.addAll(newMovies)
-        moviesFiltered =
-            movies.toList().toMutableList() // Asegurarse de actualizar la lista filtrada también
-        notifyDataSetChanged() // Notifica a RecyclerView que los datos han cambiado
+        // Refiltrar las películas basado en el último texto de búsqueda.
+        getFilter().filter(lastSearch)
     }
 
     override fun getItemCount(): Int = moviesFiltered.size
@@ -51,6 +49,8 @@ class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapt
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charString = constraint.toString()
+                lastSearch = charString // Actualizar el último texto de búsqueda.
+
                 moviesFiltered = if (charString.isEmpty()) {
                     movies
                 } else {
