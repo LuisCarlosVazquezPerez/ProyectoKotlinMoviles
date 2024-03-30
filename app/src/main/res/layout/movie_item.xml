@@ -18,10 +18,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="56dp"
+        android:text="Movie Title"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        app:layout_constraintStart_toEndOf="@+id/movie_image"
-        app:layout_constraintTop_toTopOf="@+id/movie_image"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Movie Title" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/movie_image"
+        app:layout_constraintTop_toTopOf="@+id/movie_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

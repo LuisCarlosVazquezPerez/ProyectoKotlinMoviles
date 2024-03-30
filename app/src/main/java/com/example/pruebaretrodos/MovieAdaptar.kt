@@ -1,6 +1,7 @@
 package com.example.pruebaretrodos
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,9 +36,28 @@ class MovieAdapter(private var movies: MutableList<Result>) : RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val movie = moviesFiltered[position]
+
         holder.movieTitle.text = movie.title
-        Glide.with(holder.movieImage.context).load("https://image.tmdb.org/t/p/w500${movie.poster_path}").into(holder.movieImage)
+        Glide.with(holder.movieImage.context)
+            .load("https://image.tmdb.org/t/p/w500${movie.poster_path}")
+            .into(holder.movieImage)
+
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, MovieDetailsActivity::class.java).apply {
+                putExtra("title", movie.title)
+                putExtra("image_url", "https://image.tmdb.org/t/p/w500${movie.poster_path}")
+                putExtra("description", movie.overview)
+                // Asegúrate de incluir el backdrop_path aquí
+                putExtra("backdrop_path", "https://image.tmdb.org/t/p/original${movie.backdrop_path}")
+            }
+            context.startActivity(intent)
+        }
     }
+
+
+
+
 
     fun addMovies(newMovies: List<Result>) {
         movies.addAll(newMovies)

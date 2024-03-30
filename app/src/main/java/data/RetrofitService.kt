@@ -1,5 +1,6 @@
 package data
 
+
 import data.model.RemoteResult
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -12,3 +13,4 @@ interface RetrofitService {
         @Query("page") page: Int
     ): RemoteResult
 }
+
